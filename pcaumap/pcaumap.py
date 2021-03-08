@@ -153,13 +153,13 @@ def pca_summary(
         axes[0].scatter(
             pca_feature_train[:, 0],
             pca_feature_train[:, 1],
-            alpha=0.8,
+            alpha=0.5,
             edgecolors="k",
             c=y_train,
         )
     else:
         axes[0].scatter(
-            pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.8, edgecolors="k"
+            pca_feature_train[:, 0], pca_feature_train[:, 1], alpha=0.5, edgecolors="k"
         )
 
     if X_test is not None:
@@ -168,12 +168,12 @@ def pca_summary(
             axes[0].scatter(
                 pca_feature_test[:, 0],
                 pca_feature_test[:, 1],
-                alpha=0.8,
+                alpha=0.5,
                 edgecolors="r",
                 c=y_test,
             )
         else:
-            axes[0].scatter(pca_feature_test[:, 0], pca_feature_test[:, 1], alpha=0.8)
+            axes[0].scatter(pca_feature_test[:, 0], pca_feature_test[:, 1], alpha=0.5)
 
     axes[0].set_xlabel("PC1")
     axes[0].set_ylabel("PC2")
