@@ -1,14 +1,32 @@
-from umap import UMAP
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from umap import UMAP
+
 
 class PCAUmap:
-    def __init__(self, use_pca=1, random_state=None, transform_seed=None, scaler=True):
+    def __init__(
+        self,
+        n_neighbors=15,
+        use_pca=1,
+        min_dist=0.1,
+        n_components=2,
+        random_state=None,
+        transform_seed=None,
+        scaler=True,
+        metric="euclidean",
+    ):
         self.pca = PCA()
-        self.umap = UMAP(random_state=random_state, transform_seed=transform_seed)
+        self.umap = UMAP(
+            random_state=random_state,
+            transform_seed=transform_seed,
+            n_neighbors=n_neighbors,
+            min_dist=min_dist,
+            n_components=n_components,
+            metric=metric,
+        )
         self.use_pca = use_pca
         self.random_state = random_state
         self.scaler = StandardScaler()
@@ -28,7 +46,9 @@ class PCAUmap:
             if self.use_pca is None:
                 self.embedding = self.umap.fit_transform(self.scaler.fit_tranform(data))
             else:
-                self.pca_features = self.pca.fit_transform(self.scaler.fit_transform(data))
+                self.pca_features = self.pca.fit_transform(
+                    self.scaler.fit_transform(data)
+                )
                 self.embedding = self.umap.fit_transform(self.pca_features)
 
     def transform(self, data):
@@ -62,15 +82,21 @@ class PCAUmap:
                 return self.pca.inverse_transform(self.umap.inverse_transform(embedded))
         else:
             if self.pca is None:
-                return self.scaler.inverse_transform(self.umap.inverse_transform(embedded))
+                return self.scaler.inverse_transform(
+                    self.umap.inverse_transform(embedded)
+                )
             else:
-                return self.scaler.inverse_transform(self.pca.inverse_transform(self.umap.inverse_transform(embedded)))
-            
+                return self.scaler.inverse_transform(
+                    self.pca.inverse_transform(self.umap.inverse_transform(embedded))
+                )
+
     def pca_summary(self, c=None):
         if c is None:
             plt.scatter(self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5)
         else:
-            plt.scatter(self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5, c=c)
+            plt.scatter(
+                self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5, c=c
+            )
         plt.xlabel("PC1")
         plt.ylabel("PC2")
         plt.grid()
@@ -86,7 +112,16 @@ class PCAUmap:
         plt.grid()
         plt.show()
 
-    def map_predicted_values(self, model, c=None, alpha=0.5, edgecolors="k", figsize=(8, 6), h=0.2, cm=plt.cm.jet):
+    def map_predicted_values(
+        self,
+        model,
+        c=None,
+        alpha=0.5,
+        edgecolors="k",
+        figsize=(8, 6),
+        h=0.2,
+        cm=plt.cm.jet,
+    ):
 
         x_min = self.embedding[:, 0].min() - 0.5
         x_max = self.embedding[:, 0].max() + 0.5
@@ -97,21 +132,32 @@ class PCAUmap:
         plt.figure(figsize=figsize)
         if hasattr(model, "predict_proba"):
             Z = model.predict_proba(
-                        self.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
-                    )[:, 1]
+                self.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+            )[:, 1]
         elif hasattr(model, "decision_function"):
             Z = model.decision_function(
-                        self.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
-                    )
+                self.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+            )
         else:
-                    Z = model.predict(self.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+            Z = model.predict(self.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
 
         Z = Z.reshape(xx.shape)
         plt.contourf(xx, yy, Z, alpha=alpha, cmap=cm)
         plt.colorbar()
         if c is None:
-            plt.scatter(self.embedding[:, 0], self.embedding[:, 1], alpha=alpha, edgecolors=edgecolors)
+            plt.scatter(
+                self.embedding[:, 0],
+                self.embedding[:, 1],
+                alpha=alpha,
+                edgecolors=edgecolors,
+            )
         else:
-            plt.scatter(self.embedding[:, 0], self.embedding[:, 1], alpha=alpha, c=c, edgecolors=edgecolors)
+            plt.scatter(
+                self.embedding[:, 0],
+                self.embedding[:, 1],
+                alpha=alpha,
+                c=c,
+                edgecolors=edgecolors,
+            )
         plt.grid()
         plt.show()
