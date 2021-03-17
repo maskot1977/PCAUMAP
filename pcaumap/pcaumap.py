@@ -62,3 +62,19 @@ class PCAUmap:
             else:
                 return self.scaler.inverse_transform(self.pca.inverse_transform(self.umap.inverse_transform(embedded)))
             
+    def pca_summary(self):
+        plt.scatter(self.pca_feature[:, 0], self.pca_feature[:, 1], alpha=0.5)
+        plt.xlabel("PC1")
+        plt.ylabel("PC2")
+        plt.grid()
+        plt.show()
+        plt.scatter(self.pca.components_[0], self.pca.components_[1], alpha=0.5)
+        plt.xlabel("loading 1")
+        plt.ylabel("loading 2")
+        plt.grid()
+        plt.show()
+        plt.plot([0] + list(np.cumsum(self.pca.explained_variance_ratio_)), "-o")
+        plt.xlabel("Number of principal components")
+        plt.ylabel("Cumulative contribution ratio")
+        plt.grid()
+        plt.show()
