@@ -18,7 +18,7 @@ class PCAUmap:
         scaler=True,
         metric="euclidean",
         augment_size = 3,
-        impute_rate = 0.05,
+        impute_rate = 0.1,
     ):
         self.pca = PCA()
         self.umap = UMAP(
@@ -178,6 +178,7 @@ class PCAUmap:
         augmented_data = pd.concat([self.data] * augment_size).values
         augmented_data = fill_randomly(augmented_data, np.nan, rate)
         augmented_data = pd.DataFrame(self.imputer.fit_transform(augmented_data))
+        augmented_data = pd.concat([self.data, augmented_data])
         return augmented_data
     
 def fill_randomly(X, value, rate):
