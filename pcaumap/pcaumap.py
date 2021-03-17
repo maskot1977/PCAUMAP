@@ -21,15 +21,16 @@ class PCAUmap:
                 self.umap.fit(data)
             else:
                 self.pca.fit(data)
-                self.umap.fit(self.pca.transform(data))
+                self.pca_features = self.pca.transform(data)
+                self.umap.fit(self.pca_features)
         else:
             self.scaler.fit(data)
             if self.use_pca is None:
                 self.umap.fit(self.scaler.tranform(data))
             else:
                 self.pca.fit(self.scaler.transform(data))
-                self.pca.transform(self.scaler.transform(data))
-                self.umap.fit(self.pca.transform(self.scaler.transform(data)))
+                self.pca_features = self.pca.transform(self.scaler.transform(data))
+                self.umap.fit(self.pca_features)
 
     def transform(self, data):
         self.data = data
