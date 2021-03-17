@@ -48,9 +48,14 @@ class PCAUmap:
         return self.transform(data)
 
     def inverse_transform(self, embedded):
-        
-        if self.pca is None:
-            return self.umap.inverse_transform(embedded)
+        if self.scaler is None:
+            if self.pca is None:
+                return self.umap.inverse_transform(embedded)
+            else:
+                return self.pca.inverse_transform(self.umap.inverse_transform(embedded))
         else:
-            return self.pca.inverse_transform(self.umap.inverse_transform(embedded))
+            if self.pca is None:
+                return self.scaler.inverse_transform(self.umap.inverse_transform(embedded))
+            else:
+                return self.scaler.inverse_transform(self.pca.inverse_transform(self.umap.inverse_transform(embedded)))
             
