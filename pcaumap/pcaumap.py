@@ -17,6 +17,8 @@ class PCAUmap:
         transform_seed=None,
         scaler=True,
         metric="euclidean",
+        augment_size = 10,
+        impute_rate = 0.1,
     ):
         self.pca = PCA()
         self.umap = UMAP(
@@ -34,10 +36,12 @@ class PCAUmap:
         self.pca_features = None
         self.embedding = None
         self.imputer = KNNImputer()
+        self.augment_size = augment_size
+        self.impute_rate = impute_rate
 
     def fit(self, data):
         self.data = pd.DataFrame(data)
-        augmented_data = self.augumentation(augment_size, rate)
+        augmented_data = self.augumentation(self.augment_size, self.impute_rate)
         
         if self.scaler is None:
             if self.use_pca is None:
