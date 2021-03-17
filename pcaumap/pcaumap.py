@@ -12,6 +12,7 @@ class PCAUmap:
         self.random_state = random_state
         self.scaler = StandardScaler()
         self.data = None
+        self.pca_features = None
 
     def fit(self, data):
         self.data = data
@@ -36,12 +37,14 @@ class PCAUmap:
             if self.pca is None:
                 return self.umap.transform(data)
             else:
-                return self.umap.transform(self.pca.transform(data))
+                self.pca_features = self.pca.transform(data)
+                return self.umap.transform(self.pca_features)
         else:
             if self.pca is None:
                 return self.umap.transform(self.scaler.transform(data))
             else:
-                return self.umap.transform(self.pca.transform(self.scaler.transform(data)))
+                self.pca_features = self.pca.transform(self.scaler.transform(data))
+                return self.umap.transform(self.pca_features)
 
     def fit_transform(self, data):
         self.fit(data)
