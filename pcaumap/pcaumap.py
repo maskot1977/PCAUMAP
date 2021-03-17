@@ -53,10 +53,10 @@ class PCAUmap:
                 self.embedding = self.umap.transform(self.pca_features)
         else:
             if self.use_pca is None:
-                self.umap.fit(self.scaler.fit_tranform(augmented_data))
-                self.embedding = self.umap.transform(self.scaler.tranform(data))
+                self.umap.fit(self.scaler.fit_transform(augmented_data))
+                self.embedding = self.umap.transform(self.scaler.transform(data))
             else:
-                self.umap.fit(self.pca.fit_transform(self.scaler.fit_tranform(augmented_data)))
+                self.umap.fit(self.pca.fit_transform(self.scaler.fit_transform(augmented_data)))
                 self.pca_features = self.pca.transform(self.scaler.transform(data))
                 self.embedding = self.umap.transform(self.pca_features)
 
