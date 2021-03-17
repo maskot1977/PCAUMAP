@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from umap import UMAP
-
+from sklearn.impute import KNNImputer
 
 class PCAUmap:
     def __init__(
@@ -33,23 +33,28 @@ class PCAUmap:
         self.data = None
         self.pca_features = None
         self.embedding = None
+        self.imputer = KNNImputer()
 
     def fit(self, data):
         self.data = pd.DataFrame(data)
+        augmented_data = augumentation(augment_size, rate)
+        
         if self.scaler is None:
             if self.use_pca is None:
-                self.embedding = self.umap.fit_transform(data)
+                self.umap.fit(augmented_data)
+                self.embedding = self.umap.transform(data)
             else:
-                self.pca_features = self.pca.fit_transform(data)
-                self.embedding = self.umap.fit_transform(self.pca_features)
+                self.umap.fit(self.pca.fit_transform(augmented_data))
+                self.pca_features = self.pca.transform(data)
+                self.embedding = self.umap.transform(self.pca_features)
         else:
             if self.use_pca is None:
-                self.embedding = self.umap.fit_transform(self.scaler.fit_tranform(data))
+                self.umap.fit(self.scaler.fit_tranform(augmented_data))
+                self.embedding = self.umap.transform(self.scaler.tranform(data))
             else:
-                self.pca_features = self.pca.fit_transform(
-                    self.scaler.fit_transform(data)
-                )
-                self.embedding = self.umap.fit_transform(self.pca_features)
+                self.umap.fit(self.pca.fit_transform(self.scaler.fit_tranform(augmented_data)))
+                self.pca_features = self.pca.transform(self.scaler.transform(data))
+                self.embedding = self.umap.transform(self.pca_features)
 
     def transform(self, data):
         self.data = pd.DataFrame(data)
@@ -164,3 +169,16 @@ class PCAUmap:
             )
         plt.grid()
         plt.show()
+        
+    def augumentation(self, augment_size, rate):
+        augmented_data = pd.concat([self.data] * augment_size).values
+        augmented_data = fill_randomly(augmented_data, np.nan, rate)
+        augmented_data = pd.DataFrame(self.imputer.fit_transform(augmented_data))
+        return augmented_data
+    
+def fill_randomly(X, value, rate):
+    for i in range(X.shape[0]):
+        for j in range(X.shape[1]):
+            if np.random.rand() < rate:
+                X[np.ix_([i], [j])] = value
+    return X
