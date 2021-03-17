@@ -26,9 +26,9 @@ class PCAUmap:
             if self.use_pca is None:
                 self.umap.fit(self.scaler.tranform(data))
             else:
-                self.pca.fit(self.scaler.tranform(data))
-                self.pca.transform(self.scaler.tranform(data))
-                self.umap.fit(self.pca.transform(self.scaler.tranform(data)))
+                self.pca.fit(self.scaler.transform(data))
+                self.pca.transform(self.scaler.transform(data))
+                self.umap.fit(self.pca.transform(self.scaler.transform(data)))
 
     def transform(self, data):
         self.data = data
@@ -39,9 +39,9 @@ class PCAUmap:
                 return self.umap.transform(self.pca.transform(data))
         else:
             if self.pca is None:
-                return self.umap.transform(self.scaler.tranform(data))
+                return self.umap.transform(self.scaler.transform(data))
             else:
-                return self.umap.transform(self.pca.transform(self.scaler.tranform(data)))
+                return self.umap.transform(self.pca.transform(self.scaler.transform(data)))
 
     def fit_transform(self, data):
         self.fit(data)
