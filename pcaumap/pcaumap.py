@@ -6,7 +6,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 class PCAUmap:
-    def __init__(self, use_pca=1.0, random_state=53, transform_seed=53, scaler=True):
+    def __init__(self, use_pca=1, random_state=None, transform_seed=None, scaler=True):
         self.pca = PCA()
         self.umap = UMAP(random_state=random_state, transform_seed=transform_seed)
         self.use_pca = use_pca
