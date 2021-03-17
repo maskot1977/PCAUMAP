@@ -17,8 +17,8 @@ class PCAUmap:
         transform_seed=None,
         scaler=True,
         metric="euclidean",
-        augment_size = 10,
-        impute_rate = 0.1,
+        augment_size = 3,
+        impute_rate = 0.05,
     ):
         self.pca = PCA()
         self.umap = UMAP(
