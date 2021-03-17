@@ -99,14 +99,14 @@ class PCAUmap:
         plt.figure(figsize=figsize)
         if hasattr(model, "predict_proba"):
             Z = model.predict_proba(
-                        pcau.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+                        self.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
                     )[:, 1]
         elif hasattr(model, "decision_function"):
             Z = model.decision_function(
-                        pcau.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+                        self.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
                     )
         else:
-                    Z = model.predict(pcau.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+                    Z = model.predict(self.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
 
         Z = Z.reshape(xx.shape)
         plt.contourf(xx, yy, Z, alpha=alpha, cmap=cm)
