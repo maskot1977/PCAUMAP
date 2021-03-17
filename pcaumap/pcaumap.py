@@ -1,5 +1,6 @@
 from umap import UMAP
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -16,7 +17,7 @@ class PCAUmap:
         self.embedding = None
 
     def fit(self, data):
-        self.data = data
+        self.data = pd.DataFrame(data)
         if self.scaler is None:
             if self.use_pca is None:
                 self.embedding = self.umap.fit_transform(data)
@@ -31,7 +32,7 @@ class PCAUmap:
                 self.embedding = self.umap.fit_transform(self.pca_features)
 
     def transform(self, data):
-        self.data = data
+        self.data = pd.DataFrame(data)
         if self.scaler is None:
             if self.pca is None:
                 self.embedding = self.umap.transform(data)
