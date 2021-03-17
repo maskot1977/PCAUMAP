@@ -13,6 +13,7 @@ class PCAUmap:
         self.scaler = StandardScaler()
         self.data = None
         self.pca_features = None
+        self.embedding = None
 
     def fit(self, data):
         self.data = data
@@ -36,16 +37,20 @@ class PCAUmap:
         self.data = data
         if self.scaler is None:
             if self.pca is None:
-                return self.umap.transform(data)
+                self.embedding = self.umap.transform(data)
+                return self.embedding
             else:
                 self.pca_features = self.pca.transform(data)
-                return self.umap.transform(self.pca_features)
+                self.embedding = self.umap.transform(self.pca_features)
+                return self.embedding
         else:
             if self.pca is None:
-                return self.umap.transform(self.scaler.transform(data))
+                self.embedding = self.umap.transform(self.scaler.transform(data))
+                return self.embedding
             else:
                 self.pca_features = self.pca.transform(self.scaler.transform(data))
-                return self.umap.transform(self.pca_features)
+                self.embedding = self.umap.transform(self.pca_features)
+                return self.embedding
 
     def fit_transform(self, data):
         self.fit(data)
@@ -80,5 +85,35 @@ class PCAUmap:
         plt.plot([0] + list(np.cumsum(self.pca.explained_variance_ratio_)), "-o")
         plt.xlabel("Number of principal components")
         plt.ylabel("Cumulative contribution ratio")
+        plt.grid()
+        plt.show()
+
+    def map_predicted_values(self, model, c=None, alpha=0.5, edgecolors="k", figsize=(8, 6), h=0.2, cm=plt.cm.jet):
+
+        x_min = self.embedding[:, 0].min() - 0.5
+        x_max = self.embedding[:, 0].max() + 0.5
+        y_min = self.embedding[:, 1].min() - 0.5
+        y_max = self.embedding[:, 1].max() + 0.5
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+
+        plt.figure(figsize=figsize)
+        if hasattr(model, "predict_proba"):
+            Z = model.predict_proba(
+                        pcau.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+                    )[:, 1]
+        elif hasattr(model, "decision_function"):
+            Z = model.decision_function(
+                        pcau.inverse_transform(np.c_[xx.ravel(), yy.ravel()])
+                    )
+        else:
+                    Z = model.predict(pcau.inverse_transform(np.c_[xx.ravel(), yy.ravel()]))
+
+        Z = Z.reshape(xx.shape)
+        plt.contourf(xx, yy, Z, alpha=alpha, cmap=cm)
+        plt.colorbar()
+        if c is None:
+            plt.scatter(self.embedding[:, 0], self.embedding[:, 1], alpha=alpha, edgecolors=edgecolors)
+        else:
+            plt.scatter(self.embedding[:, 0], self.embedding[:, 1], alpha=alpha, c=c, edgecolors=edgecolors)
         plt.grid()
         plt.show()
