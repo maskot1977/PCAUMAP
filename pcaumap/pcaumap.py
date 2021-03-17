@@ -37,7 +37,7 @@ class PCAUmap:
 
     def fit(self, data):
         self.data = pd.DataFrame(data)
-        augmented_data = augumentation(augment_size, rate)
+        augmented_data = self.augumentation(augment_size, rate)
         
         if self.scaler is None:
             if self.use_pca is None:
