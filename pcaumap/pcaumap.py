@@ -91,6 +91,7 @@ class PCAUmap:
                 )
 
     def pca_summary(self, c=None):
+        plt.figure(figsize=(6, 6))
         if c is None:
             plt.scatter(self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5)
         else:
@@ -101,11 +102,13 @@ class PCAUmap:
         plt.ylabel("PC2")
         plt.grid()
         plt.show()
+        plt.figure(figsize=(6, 6))
         plt.scatter(self.pca.components_[0], self.pca.components_[1], alpha=0.5)
         plt.xlabel("loading 1")
         plt.ylabel("loading 2")
         plt.grid()
         plt.show()
+        plt.figure(figsize=(6, 6))
         plt.plot([0] + list(np.cumsum(self.pca.explained_variance_ratio_)), "-o")
         plt.xlabel("Number of principal components")
         plt.ylabel("Cumulative contribution ratio")
