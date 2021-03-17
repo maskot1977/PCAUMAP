@@ -63,8 +63,11 @@ class PCAUmap:
             else:
                 return self.scaler.inverse_transform(self.pca.inverse_transform(self.umap.inverse_transform(embedded)))
             
-    def pca_summary(self):
-        plt.scatter(self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5)
+    def pca_summary(self, c=None):
+        if c is None:
+            plt.scatter(self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5)
+        else:
+            plt.scatter(self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5, c=c)
         plt.xlabel("PC1")
         plt.ylabel("PC2")
         plt.grid()
