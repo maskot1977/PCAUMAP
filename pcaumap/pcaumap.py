@@ -107,8 +107,8 @@ class PCAUmap:
             plt.scatter(
                 self.pca_features[:, 0], self.pca_features[:, 1], alpha=0.5, c=c
             )
-        plt.xlabel("PC1")
-        plt.ylabel("PC2")
+        plt.xlabel("PC1 ({}%)".format(int(self.pca.explained_variance_ratio_[0] * 100)))
+        plt.ylabel("PC2 ({}%)".format(int(self.pca.explained_variance_ratio_[1] * 100)))
         plt.grid()
         plt.show()
         plt.figure(figsize=(6, 6))
