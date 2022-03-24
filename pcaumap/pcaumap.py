@@ -59,6 +59,7 @@ class PCAUmap:
                 self.umap.fit(self.pca.fit_transform(self.scaler.fit_transform(augmented_data)))
                 self.pca_features = self.pca.transform(self.scaler.transform(data))
                 self.embedding = self.umap.transform(self.pca_features)
+        return self
 
     def transform(self, data):
         self.data = pd.DataFrame(data)
