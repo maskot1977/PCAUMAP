@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, KernelPCA
 from sklearn.preprocessing import StandardScaler
 from umap import UMAP
 from sklearn.impute import KNNImputer
@@ -11,6 +11,7 @@ class PCAUmap:
         self,
         n_neighbors=15,
         use_pca=1,
+        kernel='linear',
         min_dist=0.1,
         n_components=2,
         random_state=None,
@@ -20,7 +21,10 @@ class PCAUmap:
         augment_size = 3,
         impute_rate = 0.1,
     ):
-        self.pca = PCA()
+        if kernel == 'linear':
+            self.pca = PCA(kernel=kernel)
+        else:
+            self.pca = KernelPCA(kernel=kernel, fit_inverse_transform=True)
         self.umap = UMAP(
             random_state=random_state,
             transform_seed=transform_seed,
