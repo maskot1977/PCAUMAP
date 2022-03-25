@@ -22,7 +22,7 @@ class PCAUmap:
         impute_rate = 0.1,
     ):
         if kernel == 'linear':
-            self.pca = PCA(kernel=kernel)
+            self.pca = PCA()
         else:
             self.pca = KernelPCA(kernel=kernel, fit_inverse_transform=True)
         self.umap = UMAP(
